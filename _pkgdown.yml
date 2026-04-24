@@ -24,13 +24,19 @@ articles:
 - title: How To Use CGMissingDataR
   contents: How-To-Use-CGMissingDataR
 reference:
-- title: Running Benchmark
-  contents: run_missingness_benchmark
+- title: Current Imputation Workflows
+  contents:
+  - run_comprehensive_imputation_benchmark
+  - run_missing_glucose_imputation
+- title: Deprecated Legacy Workflow
+  contents:
+  - run_missingness_benchmark
 - title: Datasets
-  contents: CGMExampleData
+  contents:
+  - CGMExampleData
+  - CGMExampleData2
 footer:
   left: © 2026 Shubh Saraswat
   right: Built with pkgdown
 development:
   mode: auto
-

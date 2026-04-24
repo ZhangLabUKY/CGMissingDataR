@@ -5,22 +5,20 @@
 \alias{CGMExampleData}
 \title{Example dataset for CGMissingData}
 \format{
-A data frame with 250 rows and 6 variables:
+A data frame with 500 rows and 5 variables:
 \describe{
-\item{LBORRES}{Laboratory Observed Result for Glucose (numeric).}
-\item{TimeSeries}{Numeric feature representing time series data.}
-\item{TimeDifferenceMinutes}{Time difference in minutes between measurements (numeric).}
 \item{USUBJID}{Numeric subject identifier.}
-\item{SiteID}{Site identifier (character).}
-\item{Visit}{Visit label (character).}
+\item{LBORRES}{Laboratory Observed Result for Glucose (numeric).}
+\item{Time}{Raw timestamp in \code{yyyy:mm:dd:hh:nn} format.}
+\item{AGE}{Synthetic age in years.}
+\item{hba1c}{Synthetic HbA1c value.}
 }
 }
 \usage{
 CGMExampleData
 }
 \description{
-A small synthetic dataset intended for examples and tests of
-\code{run_missingness_benchmark()}.
+A small multi-subject CGM dataset intended for benchmark examples and tests.
 }
 \examples{
 data("CGMExampleData")

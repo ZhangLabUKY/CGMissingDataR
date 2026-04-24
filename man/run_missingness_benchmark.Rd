@@ -2,73 +2,68 @@
 % Please edit documentation in R/run_bench.R
 \name{run_missingness_benchmark}
 \alias{run_missingness_benchmark}
-\title{Run missingness benchmark}
+\title{Run missingness benchmark (target-masking with LAG features)
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}
 \usage{
 run_missingness_benchmark(
   data,
   target_col,
   feature_cols = NULL,
-  mask_rates = c(0.05, 0.1, 0.2, 0.3),
-  rf_n_estimators = 200,
-  knn_k = 5,
-  test_size = 0.2,
-  seed = 42
+  id_col = "USUBJID",
+  time_col = "TimeSeries",
+  mask_rates = c(0.05, 0.1, 0.2, 0.3, 0.4),
+  mask_type = c("random", "block"),
+  rf_n_estimators = 400,
+  knn_k = 7,
+  seed = 42,
+  lag_k = c(1, 2, 3),
+  add_rollmean = TRUE,
+  roll_window = 3
 )
 }
 \arguments{
-\item{data}{A data.frame (or object coercible to data.frame) containing the dataset.}
+\item{data}{A data.frame (or object coercible to data.frame), OR a path to a CSV file.}
 
-\item{target_col}{Single character string: name of the outcome column.}
+\item{target_col}{Single character string: name of the outcome column to mask/impute (e.g., "LBORRES", "Glucose").}
 
-\item{feature_cols}{Character vector of feature column names. If \code{NULL},
-uses all columns except \code{target_col}.}
+\item{feature_cols}{Character vector of base feature columns (excluding the target).
+If NULL, uses all columns except \code{target_col}.}
 
-\item{mask_rates}{Numeric vector in (0, 1): proportion of feature entries to mask per rate.}
+\item{id_col}{Character string: subject identifier column used for LAG features (default "USUBJID").}
 
-\item{rf_n_estimators}{Integer: number of trees for the random forest.}
+\item{time_col}{Character string: time-ordering column used for LAG features (default "TimeSeries").}
 
-\item{knn_k}{Integer: number of neighbors for kNN regression.}
+\item{mask_rates}{Numeric vector in (0, 1): fraction of rows to mask (default 0.05, 0.10, 0.20, 0.30, 0.40).}
 
-\item{test_size}{Numeric in (0, 1): fraction of rows assigned to validation split.}
+\item{mask_type}{One of \code{"random"} or \code{"block"}.}
 
-\item{seed}{Integer: seed for data split and model reproducibility.}
+\item{rf_n_estimators}{Integer: number of trees for random forest (default 400).}
+
+\item{knn_k}{Integer: number of neighbors for kNN (default 7).}
+
+\item{seed}{Integer: random seed used for MICE and models (default 42).}
+
+\item{lag_k}{Integer vector of lags to compute on the target (default c(1,2,3)).}
+
+\item{add_rollmean}{Logical: add rolling mean feature of prior target values (default TRUE).}
+
+\item{roll_window}{Integer: rolling window length for rollmean (default 3).}
 }
 \value{
-A data.frame with columns \code{MaskRate}, \code{Model}, \code{MAPE}, and \code{R2}.
+A data.frame with columns: MaskRate, Method, MRD, MaskedCount.
 }
 \description{
-Benchmarks model performance under feature missingness. The function:
-\enumerate{
-\item Filters to complete cases for \code{target_col} and \code{feature_cols} (baseline complete data),
-\item Splits into training/validation,
-\item Masks feature values at each rate using Bernoulli (cell-wise) missingness,
-\item Imputes missing features using MICE on training data and applies the fitted imputation model to
-validation data via \code{mice::mice.mids(newdata = ...)} (reduces leakage),
-\item Trains Random Forest (\code{ranger}) and kNN regression (\code{FNN::knn.reg}),
-\item Returns MAPE and R-squared for each model and mask rate.
-}
+This function is deprecated. Use
+\code{run_comprehensive_imputation_benchmark()} for benchmark comparisons or
+\code{run_missing_glucose_imputation()} for real missing glucose values.
 
-Feature columns must be numeric (or coercible to numeric without introducing new missing values).
-This mirrors workflows where features are treated as numeric arrays.
+This function implements missingness benchmarking by masking the target column at various rates and
+evaluating imputation and predictive performance of MICE, Random Forest, and KNN methods. Additionally,
+it includes LAG features of the target variable to assess their impact on imputation and prediction.
+The function returns a data.frame summarizing the Mask Rate, Method, MRD (Mean Relative Difference), and
+Masked Count for each method and mask rate.
 }
 \details{
-Validation imputation is performed using \code{mice::mice.mids(newdata = ...)}, which generates imputations
-for new data according to the model stored in the training \code{mids} object.
-
-MAPE is computed using \code{Metrics::mape()} on non-zero targets only to avoid instability when actual values are zero.
-}
-\examples{
-data("CGMExampleData")
-run_missingness_benchmark(
-  CGMExampleData,
-  target_col = "LBORRES",
-  feature_cols = c("TimeDifferenceMinutes", "TimeSeries", "USUBJID"),
-  mask_rates = c(0.05, 0.10),
-  rf_n_estimators = 100,
-  knn_k = 3
-)
-
-}
-\author{
-Shubh Saraswat, Hasin Shahed Shad, and Xiaohua Douglas Zhang
+LAG features are computed using \code{data.table::shift()} (fast lag/lead). The rolling mean
+is computed with \code{data.table::frollmean()} using \code{align="right"} and \code{fill=NA}.
 }

@@ -1,5 +1,5 @@
 Package: CGMissingDataR
-Title: Missingness Benchmark for Continuous Glucose Monitoring Data
+Title: Benchmark and Impute Missing Glucose Values in CGM Data
 Version: 0.0.1.9000
 Authors@R: c(
     person("Shubh", "Saraswat", email = "shubh.saraswat00@gmail.com", role = c("cre", "aut", "cph"),
@@ -7,7 +7,7 @@ Authors@R: c(
     person("Hasin Shahed Shad", email = "hasin.shad@uky.edu", role = "aut"),
     person("Xiaohua Douglas", "Zhang", email = "douglas.zhang@uky.edu", role = "aut",
     comment = c(ORCID = "0000-0002-2486-7931")))
-Description: Evaluates predictive performance under feature-level missingness in repeated-measures continuous glucose monitoring-like data. The benchmark injects missing values at user-specified rates, imputes incomplete feature matrices using an iterative chained-equations approach inspired by multivariate imputation by chained equations (MICE; Azur et al. (2011) <doi:10.1002/mpr.329>), fits Random Forest regression models (Breiman (2001) <doi:10.1023/A:1010933404324>) and k-nearest-neighbor regression models (Zhang (2016) <doi:10.21037/atm.2016.03.37>), and reports mean absolute percentage error and R-squared across missingness rates.
+Description: Benchmarks and imputes missing glucose values in repeated-measures continuous glucose monitoring (CGM) data. The package can mask known glucose values using random, contiguous block, or gap-distribution block missingness to compare imputation performance, and can impute glucose values that are already missing in user data. Workflows create time-series features from raw timestamps, support model selection, and return model-specific completed data sets. Methods include multiple imputation by chained equations (MICE; Azur et al. (2011) <doi:10.1002/mpr.329>), Random Forest regression (Breiman (2001) <doi:10.1023/A:1010933404324>), k-nearest-neighbor regression (Zhang (2016) <doi:10.21037/atm.2016.03.37>), XGBoost (Chen and Guestrin (2016) <doi:10.1145/2939672.2939785>), LightGBM (Ke et al. (2017) <https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision>), and ARIMA forecasting with the forecast framework (Hyndman and Khandakar (2008) <doi:10.18637/jss.v027.i03>).
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,8 +16,13 @@ RoxygenNote: 7.3.3
 Imports:
     mice,
     FNN,
-    Metrics,
-    ranger
+    ranger,
+    data.table,
+    xgboost,
+    lightgbm,
+    forecast,
+    CGManalyzer,
+    lifecycle
 Suggests:
     testthat (>= 3.0.0),
     spelling, 
