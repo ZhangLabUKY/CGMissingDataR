@@ -1,16 +1,25 @@
-# CGMissingDataR: Missingness Benchmark for Continuous Glucose Monitoring Data
+# CGMissingDataR: Benchmark and Impute Missing Glucose Values in CGM Data
 
 Benchmarks and imputes missing glucose values in repeated-measures
-continuous glucose monitoring-like data. The package can mask known
-glucose values to compare imputation methods, or impute values that are
-already missing in user data. Methods include multiple imputation by
-chained equations (MICE; Azur et al. (2011)
+continuous glucose monitoring (CGM) data. The package can mask known
+glucose values using random, contiguous block, or gap-distribution block
+missingness to compare imputation performance, and can impute glucose
+values that are already missing in user data. Workflows create
+time-series features from raw timestamps, support model selection, and
+return model-specific completed data sets. Methods include multiple
+imputation by chained equations (MICE; Azur et al. (2011)
 [doi:10.1002/mpr.329](https://doi.org/10.1002/mpr.329) ), Random Forest
 regression (Breiman (2001)
 [doi:10.1023/A:1010933404324](https://doi.org/10.1023/A%3A1010933404324)
 ), k-nearest-neighbor regression (Zhang (2016)
 [doi:10.21037/atm.2016.03.37](https://doi.org/10.21037/atm.2016.03.37)
-), XGBoost, LightGBM, and ARIMA.
+), XGBoost (Chen and Guestrin (2016)
+[doi:10.1145/2939672.2939785](https://doi.org/10.1145/2939672.2939785)
+), LightGBM (Ke et al. (2017)
+[doi:10.5555/3294996.3295074](https://doi.org/10.5555/3294996.3295074)
+), and ARIMA forecasting with the forecast framework (Hyndman and
+Khandakar (2008)
+[doi:10.18637/jss.v027.i03](https://doi.org/10.18637/jss.v027.i03) ).
 
 ## See also
 

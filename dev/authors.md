@@ -16,11 +16,11 @@ Source:
 [`DESCRIPTION`](https://github.com/ZhangLabUKY/CGMissingDataR/blob/master/DESCRIPTION)
 
 Saraswat S, Hasin Shahed Shad, Zhang X (2026). *CGMissingDataR:
-Missingness Benchmark for Continuous Glucose Monitoring Data*. R package
+Benchmark and Impute Missing Glucose Values in CGM Data*. R package
 version 0.0.1.9000, <https://zhanglabuky.github.io/CGMissingDataR/>.
 
     @Manual{,
-      title = {CGMissingDataR: Missingness Benchmark for Continuous Glucose Monitoring Data},
+      title = {CGMissingDataR: Benchmark and Impute Missing Glucose Values in CGM Data},
       author = {Shubh Saraswat and {Hasin Shahed Shad} and Xiaohua Douglas Zhang},
       year = {2026},
       note = {R package version 0.0.1.9000},
