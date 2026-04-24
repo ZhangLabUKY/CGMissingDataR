@@ -1,20 +1,29 @@
 # CGMissingDataR
 
-CGMissingDataR is an R package based on the CGMissingData Python library
-for evaluating model performance under feature missingness by:
+CGMissingDataR supports continuous glucose monitoring-style missing-data
+workflows. It can benchmark imputation methods by masking known glucose
+values, or impute glucose values that are already missing in user data.
 
-- injecting missing values into feature columns at specified masking
-  rates,
-- imputing missing values using a Multiple Imputation by Chained
-  Equations (MICE)-style iterative imputer, and
-- training Random Forest and k-Nearest Neighbors regressors to report
-  Mean ABsolute Percentage Error (MAPE) and R across missingness levels.
+Current workflows include:
 
-Before the installation, ensure that you have the following R packages
-installed:
+- [`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
+  for artificial masking benchmarks,
+- [`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
+  for real missing glucose values,
+- model selection with `models = "mice_only"`, a subset of models, or
+  `models = "all"`, and
+- automatic creation of `TimeSeries` and `TimeDifferenceMinutes` from a
+  raw timestamp column.
+
+## Installation
+
+Before installation, make sure the modeling dependencies are available:
 
 ``` r
-install.packages(c("FNN", "ranger", "mice"))
+install.packages(c(
+  "FNN", "ranger", "mice", "xgboost", "lightgbm", "forecast",
+  "CGManalyzer", "lifecycle"
+))
 ```
 
 Install the development version of CGMissingDataR from GitHub:
@@ -23,18 +32,21 @@ Install the development version of CGMissingDataR from GitHub:
 devtools::install_github("ZhangLabUKY/CGMissingDataR")
 ```
 
-Install `CGMissingDataR`from CRAN with:
+Install `CGMissingDataR` from CRAN with:
 
 ``` r
 install.packages("CGMissingDataR")
 ```
 
-## Vignette
+## Learn More
 
-A brief vignette illustrating the usage of CGMissingDataR can be found
-[here](https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html).
+The vignette is the main tutorial and includes runnable examples,
+dataset summaries, benchmark results, and real-imputation output:
+
+<https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html>
 
 ## Changelog
 
-The changelog is available
-[here](https://zhanglabuky.github.io/CGMissingDataR/news/index.html).
+The changelog is available at:
+
+<https://zhanglabuky.github.io/CGMissingDataR/news/index.html>

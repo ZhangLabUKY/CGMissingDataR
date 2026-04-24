@@ -1,27 +1,18 @@
-# Run missingness benchmark
+# Run missingness benchmark (target-masking with LAG features) **\[deprecated\]**
 
-Benchmarks model performance under feature missingness. The function:
+This function is deprecated. Use
+[`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
+for benchmark comparisons or
+[`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
+for real missing glucose values.
 
-1.  Filters to complete cases for `target_col` and `feature_cols`
-    (baseline complete data),
-
-2.  Splits into training/validation,
-
-3.  Masks feature values at each rate using Bernoulli (cell-wise)
-    missingness,
-
-4.  Imputes missing features using MICE on training data and applies the
-    fitted imputation model to validation data via
-    `mice::mice.mids(newdata = ...)` (reduces leakage),
-
-5.  Trains Random Forest (`ranger`) and kNN regression
-    ([`FNN::knn.reg`](https://rdrr.io/pkg/FNN/man/knn.reg.html)),
-
-6.  Returns MAPE and R-squared for each model and mask rate.
-
-Feature columns must be numeric (or coercible to numeric without
-introducing new missing values). This mirrors workflows where features
-are treated as numeric arrays.
+This function implements missingness benchmarking by masking the target
+column at various rates and evaluating imputation and predictive
+performance of MICE, Random Forest, and KNN methods. Additionally, it
+includes LAG features of the target variable to assess their impact on
+imputation and prediction. The function returns a data.frame summarizing
+the Mask Rate, Method, MRD (Mean Relative Difference), and Masked Count
+for each method and mask rate.
 
 ## Usage
 
@@ -30,11 +21,16 @@ run_missingness_benchmark(
   data,
   target_col,
   feature_cols = NULL,
-  mask_rates = c(0.05, 0.1, 0.2, 0.3),
-  rf_n_estimators = 200,
-  knn_k = 5,
-  test_size = 0.2,
-  seed = 42
+  id_col = "USUBJID",
+  time_col = "TimeSeries",
+  mask_rates = c(0.05, 0.1, 0.2, 0.3, 0.4),
+  mask_type = c("random", "block"),
+  rf_n_estimators = 400,
+  knn_k = 7,
+  seed = 42,
+  lag_k = c(1, 2, 3),
+  add_rollmean = TRUE,
+  roll_window = 3
 )
 ```
 
@@ -42,74 +38,71 @@ run_missingness_benchmark(
 
 - data:
 
-  A data.frame (or object coercible to data.frame) containing the
-  dataset.
+  A data.frame (or object coercible to data.frame), OR a path to a CSV
+  file.
 
 - target_col:
 
-  Single character string: name of the outcome column.
+  Single character string: name of the outcome column to mask/impute
+  (e.g., "LBORRES", "Glucose").
 
 - feature_cols:
 
-  Character vector of feature column names. If `NULL`, uses all columns
-  except `target_col`.
+  Character vector of base feature columns (excluding the target). If
+  NULL, uses all columns except `target_col`.
+
+- id_col:
+
+  Character string: subject identifier column used for LAG features
+  (default "USUBJID").
+
+- time_col:
+
+  Character string: time-ordering column used for LAG features (default
+  "TimeSeries").
 
 - mask_rates:
 
-  Numeric vector in (0, 1): proportion of feature entries to mask per
-  rate.
+  Numeric vector in (0, 1): fraction of rows to mask (default 0.05,
+  0.10, 0.20, 0.30, 0.40).
+
+- mask_type:
+
+  One of `"random"` or `"block"`.
 
 - rf_n_estimators:
 
-  Integer: number of trees for the random forest.
+  Integer: number of trees for random forest (default 400).
 
 - knn_k:
 
-  Integer: number of neighbors for kNN regression.
-
-- test_size:
-
-  Numeric in (0, 1): fraction of rows assigned to validation split.
+  Integer: number of neighbors for kNN (default 7).
 
 - seed:
 
-  Integer: seed for data split and model reproducibility.
+  Integer: random seed used for MICE and models (default 42).
+
+- lag_k:
+
+  Integer vector of lags to compute on the target (default c(1,2,3)).
+
+- add_rollmean:
+
+  Logical: add rolling mean feature of prior target values (default
+  TRUE).
+
+- roll_window:
+
+  Integer: rolling window length for rollmean (default 3).
 
 ## Value
 
-A data.frame with columns `MaskRate`, `Model`, `MAPE`, and `R2`.
+A data.frame with columns: MaskRate, Method, MRD, MaskedCount.
 
 ## Details
 
-Validation imputation is performed using
-`mice::mice.mids(newdata = ...)`, which generates imputations for new
-data according to the model stored in the training `mids` object.
-
-MAPE is computed using
-[`Metrics::mape()`](https://rdrr.io/pkg/Metrics/man/mape.html) on
-non-zero targets only to avoid instability when actual values are zero.
-
-## Author
-
-Shubh Saraswat, Hasin Shahed Shad, and Xiaohua Douglas Zhang
-
-## Examples
-
-``` r
-data("CGMExampleData")
-run_missingness_benchmark(
-  CGMExampleData,
-  target_col = "LBORRES",
-  feature_cols = c("TimeDifferenceMinutes", "TimeSeries", "USUBJID"),
-  mask_rates = c(0.05, 0.10),
-  rf_n_estimators = 100,
-  knn_k = 3
-)
-#> Warning: Number of logged events: 1
-#> Warning: Number of logged events: 1
-#>   MaskRate         Model     MAPE        R2
-#> 1       5% Random Forest 7.519025 0.7402591
-#> 2       5%           kNN 8.140677 0.7095650
-#> 3      10% Random Forest 8.520641 0.6684686
-#> 4      10%           kNN 9.417613 0.6036350
-```
+LAG features are computed using
+[`data.table::shift()`](https://rdrr.io/pkg/data.table/man/shift.html)
+(fast lag/lead). The rolling mean is computed with
+[`data.table::frollmean()`](https://rdrr.io/pkg/data.table/man/froll.html)
+using `align="right"` and `fill=NA`.

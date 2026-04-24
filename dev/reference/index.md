@@ -1,11 +1,23 @@
 # Package index
 
-## Running Benchmark
+## Current Imputation Workflows
+
+- [`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
+  : Run comprehensive imputation benchmark
+- [`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
+  : Impute real missing glucose values
+
+## Deprecated Legacy Workflow
 
 - [`run_missingness_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missingness_benchmark.md)
-  : Run missingness benchmark
+  :
+
+  Run missingness benchmark (target-masking with LAG features)
+  **\[deprecated\]**
 
 ## Datasets
 
 - [`CGMExampleData`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/CGMExampleData.md)
   : Example dataset for CGMissingData
+- [`CGMExampleData2`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/CGMExampleData2.md)
+  : Example dataset with missing glucose values

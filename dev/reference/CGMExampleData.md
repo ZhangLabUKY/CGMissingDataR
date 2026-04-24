@@ -1,7 +1,7 @@
 # Example dataset for CGMissingData
 
-A small synthetic dataset intended for examples and tests of
-[`run_missingness_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missingness_benchmark.md).
+A small multi-subject CGM dataset intended for benchmark examples and
+tests.
 
 ## Usage
 
@@ -11,31 +11,27 @@ CGMExampleData
 
 ## Format
 
-A data frame with 250 rows and 6 variables:
-
-- LBORRES:
-
-  Laboratory Observed Result for Glucose (numeric).
-
-- TimeSeries:
-
-  Numeric feature representing time series data.
-
-- TimeDifferenceMinutes:
-
-  Time difference in minutes between measurements (numeric).
+A data frame with 500 rows and 5 variables:
 
 - USUBJID:
 
   Numeric subject identifier.
 
-- SiteID:
+- LBORRES:
 
-  Site identifier (character).
+  Laboratory Observed Result for Glucose (numeric).
 
-- Visit:
+- Time:
 
-  Visit label (character).
+  Raw timestamp in `yyyy:mm:dd:hh:nn` format.
+
+- AGE:
+
+  Synthetic age in years.
+
+- hba1c:
+
+  Synthetic HbA1c value.
 
 ## Examples
 

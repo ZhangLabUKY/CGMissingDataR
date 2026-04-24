@@ -44,7 +44,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="cgmissingdatar-development-version">CGMissingDataR (development version)<a class="anchor" aria-label="anchor" href="#cgmissingdatar-development-version"></a></h2>
-<ul><li>Preparing for version 0.0.2 of CGMissingDataR after transferring GitHub Repository and fixing URLs.</li>
+<ul><li>Added <code><a href="../reference/run_comprehensive_imputation_benchmark.html">run_comprehensive_imputation_benchmark()</a></code> for benchmarking target glucose imputation with random, single-block, and gap-distribution block masking.</li>
+<li>Added <code><a href="../reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation()</a></code> for imputing glucose values that are already missing in user data.</li>
+<li>Added automatic raw timestamp conversion with <code><a href="https://rdrr.io/pkg/CGManalyzer/man/timeSeqConversion.fn.html" class="external-link">CGManalyzer::timeSeqConversion.fn()</a></code> to create <code>TimeSeries</code>, plus within-subject <code>TimeDifferenceMinutes</code>.</li>
+<li>Added model selection with the <code>models</code> argument. The default is <code>models = "mice_only"</code>; use <code>models = "all"</code> to run MICE-only, Random Forest, kNN, XGBoost, LightGBM, and ARIMA.</li>
+<li>Updated benchmark and real-imputation outputs to return nested model-specific <code>imputed_data</code> data frames.</li>
+<li>Added <code>CGMExampleData2</code>, a 500-row multi-subject CGM example dataset with deterministic missing glucose values for real-imputation examples.</li>
+<li>Deprecated <code><a href="../reference/run_missingness_benchmark.html">run_missingness_benchmark()</a></code>. It remains available for backward compatibility and now warns users to prefer <code><a href="../reference/run_comprehensive_imputation_benchmark.html">run_comprehensive_imputation_benchmark()</a></code> for benchmark comparisons or <code><a href="../reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation()</a></code> for real missing glucose values.</li>
+<li>Preparing for version 0.0.2 of CGMissingDataR after transferring GitHub Repository and fixing URLs.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.1" id="cgmissingdatar-001">CGMissingDataR 0.0.1<a class="anchor" aria-label="anchor" href="#cgmissingdatar-001"></a></h2><p class="text-muted">CRAN release: 2026-02-03</p>

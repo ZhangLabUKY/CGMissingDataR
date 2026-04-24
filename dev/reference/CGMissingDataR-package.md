@@ -1,17 +1,16 @@
 # CGMissingDataR: Missingness Benchmark for Continuous Glucose Monitoring Data
 
-Evaluates predictive performance under feature-level missingness in
-repeated-measures continuous glucose monitoring-like data. The benchmark
-injects missing values at user-specified rates, imputes incomplete
-feature matrices using an iterative chained-equations approach inspired
-by multivariate imputation by chained equations (MICE; Azur et al.
-(2011) [doi:10.1002/mpr.329](https://doi.org/10.1002/mpr.329) ), fits
-Random Forest regression models (Breiman (2001)
+Benchmarks and imputes missing glucose values in repeated-measures
+continuous glucose monitoring-like data. The package can mask known
+glucose values to compare imputation methods, or impute values that are
+already missing in user data. Methods include multiple imputation by
+chained equations (MICE; Azur et al. (2011)
+[doi:10.1002/mpr.329](https://doi.org/10.1002/mpr.329) ), Random Forest
+regression (Breiman (2001)
 [doi:10.1023/A:1010933404324](https://doi.org/10.1023/A%3A1010933404324)
-) and k-nearest-neighbor regression models (Zhang (2016)
+), k-nearest-neighbor regression (Zhang (2016)
 [doi:10.21037/atm.2016.03.37](https://doi.org/10.21037/atm.2016.03.37)
-), and reports mean absolute percentage error and R-squared across
-missingness rates.
+), XGBoost, LightGBM, and ARIMA.
 
 ## See also
 
