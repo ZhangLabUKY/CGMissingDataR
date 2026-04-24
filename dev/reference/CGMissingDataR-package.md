@@ -16,9 +16,9 @@ regression (Breiman (2001)
 ), XGBoost (Chen and Guestrin (2016)
 [doi:10.1145/2939672.2939785](https://doi.org/10.1145/2939672.2939785)
 ), LightGBM (Ke et al. (2017)
-[doi:10.5555/3294996.3295074](https://doi.org/10.5555/3294996.3295074)
-), and ARIMA forecasting with the forecast framework (Hyndman and
-Khandakar (2008)
+<https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision>),
+and ARIMA forecasting with the forecast framework (Hyndman and Khandakar
+(2008)
 [doi:10.18637/jss.v027.i03](https://doi.org/10.18637/jss.v027.i03) ).
 
 ## See also
