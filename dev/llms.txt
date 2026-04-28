@@ -1,19 +1,17 @@
 # CGMissingDataR
 
-CGMissingDataR supports continuous glucose monitoring-style missing-data
-workflows. It can benchmark imputation methods by masking known glucose
-values, or impute glucose values that are already missing in user data.
+CGMissingDataR supports continuous glucose monitoring (CGM) workflows
+for imputing glucose values that are already missing in user data.
 
-Current workflows include:
+Current workflow features include:
 
-- [`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
-  for artificial masking benchmarks,
 - [`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
   for real missing glucose values,
 - model selection with `models = "mice_only"`, a subset of models, or
   `models = "all"`, and
 - automatic creation of `TimeSeries` and `TimeDifferenceMinutes` from a
-  raw timestamp column.
+  raw timestamp column, with common timestamp formats standardized
+  internally.
 
 ## Installation
 
@@ -41,7 +39,7 @@ install.packages("CGMissingDataR")
 ## Learn More
 
 The vignette is the main tutorial and includes runnable examples,
-dataset summaries, benchmark results, and real-imputation output:
+dataset summaries, and real-imputation output:
 
 <https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html>
 
@@ -55,8 +53,6 @@ The changelog is available at:
 
 ## Current Imputation Workflows
 
-- [`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
-  : Run comprehensive imputation benchmark
 - [`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
   : Impute real missing glucose values
 
@@ -72,8 +68,6 @@ The changelog is available at:
 
 - [`CGMExampleData`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/CGMExampleData.md)
   : Example dataset for CGMissingData
-- [`CGMExampleData2`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/CGMExampleData2.md)
-  : Example dataset with missing glucose values
 
 # Articles
 

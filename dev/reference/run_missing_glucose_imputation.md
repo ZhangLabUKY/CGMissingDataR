@@ -1,8 +1,7 @@
 # Impute real missing glucose values
 
-Imputes existing missing values in a target glucose column using the
-same time-feature, lag-feature, and model workflow as
-[`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md).
+Imputes existing missing values in a target glucose column using
+generated time features, lag features, and the selected model workflow.
 This function does not calculate accuracy metrics because the true
 values for the originally missing glucose rows are unknown.
 
@@ -58,8 +57,10 @@ run_missing_glucose_imputation(
 
 - time_format:
 
-  Character string passed to
+  Advanced character string passed to
   [`CGManalyzer::timeSeqConversion.fn()`](https://rdrr.io/pkg/CGManalyzer/man/timeSeqConversion.fn.html).
+  The default automatically handles common timestamp inputs, so most
+  users only need to provide `time_col`.
 
 - time_unit:
 
@@ -124,6 +125,12 @@ named list of model-specific completed data.frames.
 
 ## Details
 
+Common timestamp inputs, including `POSIXct`, `Date`,
+`2020:01:16:00:00`, `2020-01-16 00:00:00`, `2020/01/16 00:00:00`, and
+`2020-01-16T00:00:00`, are standardized internally before
+[`CGManalyzer::timeSeqConversion.fn()`](https://rdrr.io/pkg/CGManalyzer/man/timeSeqConversion.fn.html)
+is called.
+
 The returned `imputed_data` object is a named list with one data.frame
 per selected model. The original target column is kept unchanged.
 `ObservedValue` contains the original target values, including `NA`
@@ -133,14 +140,13 @@ model-specific target values.
 ## Examples
 
 ``` r
-data("CGMExampleData2")
+data("CGMExampleData")
 out <- run_missing_glucose_imputation(
-  CGMExampleData2,
+  CGMExampleData,
   target_col = "LBORRES",
   feature_cols = c("AGE", "hba1c"),
   id_col = "USUBJID",
   time_col = "Time",
-  time_format = "yyyy:mm:dd:hh:nn",
   models = c("mice_only", "rf"),
   rf_n_estimators = 25
 )

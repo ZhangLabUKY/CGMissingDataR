@@ -1,8 +1,6 @@
 # Run missingness benchmark (target-masking with LAG features) **\[deprecated\]**
 
 This function is deprecated. Use
-[`run_comprehensive_imputation_benchmark()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_comprehensive_imputation_benchmark.md)
-for benchmark comparisons or
 [`run_missing_glucose_imputation()`](https://zhanglabuky.github.io/CGMissingDataR/dev/reference/run_missing_glucose_imputation.md)
 for real missing glucose values.
 

@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Welcome to CGMissingDataR">
-<meta name="description" content="Benchmarks and imputes missing glucose values in repeated-measures continuous glucose monitoring (CGM) data. The package can mask known glucose values using random, contiguous block, or gap-distribution block missingness to compare imputation performance, and can impute glucose values that are already missing in user data. Workflows create time-series features from raw timestamps, support model selection, and return model-specific completed data sets. Methods include multiple imputation by chained equations (MICE; Azur et al. (2011) &lt;doi:10.1002/mpr.329&gt;), Random Forest regression (Breiman (2001) &lt;doi:10.1023/A:1010933404324&gt;), k-nearest-neighbor regression (Zhang (2016) &lt;doi:10.21037/atm.2016.03.37&gt;), XGBoost (Chen and Guestrin (2016) &lt;doi:10.1145/2939672.2939785&gt;), LightGBM (Ke et al. (2017) &lt;https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision&gt;), and ARIMA forecasting with the forecast framework (Hyndman and Khandakar (2008) &lt;doi:10.18637/jss.v027.i03&gt;).">
-<meta property="og:description" content="Benchmarks and imputes missing glucose values in repeated-measures continuous glucose monitoring (CGM) data. The package can mask known glucose values using random, contiguous block, or gap-distribution block missingness to compare imputation performance, and can impute glucose values that are already missing in user data. Workflows create time-series features from raw timestamps, support model selection, and return model-specific completed data sets. Methods include multiple imputation by chained equations (MICE; Azur et al. (2011) &lt;doi:10.1002/mpr.329&gt;), Random Forest regression (Breiman (2001) &lt;doi:10.1023/A:1010933404324&gt;), k-nearest-neighbor regression (Zhang (2016) &lt;doi:10.21037/atm.2016.03.37&gt;), XGBoost (Chen and Guestrin (2016) &lt;doi:10.1145/2939672.2939785&gt;), LightGBM (Ke et al. (2017) &lt;https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision&gt;), and ARIMA forecasting with the forecast framework (Hyndman and Khandakar (2008) &lt;doi:10.18637/jss.v027.i03&gt;).">
+<meta name="description" content="Imputes missing glucose values in repeated-measures continuous glucose monitoring (CGM) data. Workflows create time-series features from raw timestamps, support model selection, and return model-specific completed data sets for glucose values that are already missing in user data. Methods include multiple imputation by chained equations (MICE; Azur et al. (2011) &lt;doi:10.1002/mpr.329&gt;), Random Forest regression (Breiman (2001) &lt;doi:10.1023/A:1010933404324&gt;), k-nearest-neighbor regression (Zhang (2016) &lt;doi:10.21037/atm.2016.03.37&gt;), XGBoost (Chen and Guestrin (2016) &lt;doi:10.1145/2939672.2939785&gt;), LightGBM (Ke et al. (2017) &lt;https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision&gt;), and ARIMA forecasting with the forecast framework (Hyndman and Khandakar (2008) &lt;doi:10.18637/jss.v027.i03&gt;).">
+<meta property="og:description" content="Imputes missing glucose values in repeated-measures continuous glucose monitoring (CGM) data. Workflows create time-series features from raw timestamps, support model selection, and return model-specific completed data sets for glucose values that are already missing in user data. Methods include multiple imputation by chained equations (MICE; Azur et al. (2011) &lt;doi:10.1002/mpr.329&gt;), Random Forest regression (Breiman (2001) &lt;doi:10.1023/A:1010933404324&gt;), k-nearest-neighbor regression (Zhang (2016) &lt;doi:10.21037/atm.2016.03.37&gt;), XGBoost (Chen and Guestrin (2016) &lt;doi:10.1145/2939672.2939785&gt;), LightGBM (Ke et al. (2017) &lt;https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision&gt;), and ARIMA forecasting with the forecast framework (Hyndman and Khandakar (2008) &lt;doi:10.18637/jss.v027.i03&gt;).">
 <meta name="robots" content="noindex">
 </head>
 <body>
@@ -66,15 +66,13 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>CGMissingDataR supports continuous glucose monitoring-style missing-data workflows. It can benchmark imputation methods by masking known glucose values, or impute glucose values that are already missing in user data.</p>
-<p>Current workflows include:</p>
+<p>CGMissingDataR supports continuous glucose monitoring (CGM) workflows for imputing glucose values that are already missing in user data.</p>
+<p>Current workflow features include:</p>
 <ul>
-<li>
-<code><a href="reference/run_comprehensive_imputation_benchmark.html">run_comprehensive_imputation_benchmark()</a></code> for artificial masking benchmarks,</li>
 <li>
 <code><a href="reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation()</a></code> for real missing glucose values,</li>
 <li>model selection with <code>models = "mice_only"</code>, a subset of models, or <code>models = "all"</code>, and</li>
-<li>automatic creation of <code>TimeSeries</code> and <code>TimeDifferenceMinutes</code> from a raw timestamp column.</li>
+<li>automatic creation of <code>TimeSeries</code> and <code>TimeDifferenceMinutes</code> from a raw timestamp column, with common timestamp formats standardized internally.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -95,7 +93,7 @@
 <div class="section level2">
 <h2 id="learn-more">Learn More<a class="anchor" aria-label="anchor" href="#learn-more"></a>
 </h2>
-<p>The vignette is the main tutorial and includes runnable examples, dataset summaries, benchmark results, and real-imputation output:</p>
+<p>The vignette is the main tutorial and includes runnable examples, dataset summaries, and real-imputation output:</p>
 <p><a href="https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html" class="uri">https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html</a></p>
 </div>
 <div class="section level2">

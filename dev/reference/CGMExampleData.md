@@ -1,7 +1,8 @@
 # Example dataset for CGMissingData
 
-A small multi-subject CGM dataset intended for benchmark examples and
-tests.
+A small multi-subject CGM dataset intended for real missing-value
+imputation examples. It contains 50 deterministic missing glucose
+values.
 
 ## Usage
 
@@ -19,7 +20,8 @@ A data frame with 500 rows and 5 variables:
 
 - LBORRES:
 
-  Laboratory Observed Result for Glucose (numeric).
+  Laboratory Observed Result for Glucose (numeric), with deterministic
+  missing values.
 
 - Time:
 

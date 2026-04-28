@@ -77,20 +77,23 @@
 <div class="section level2">
 <h2 id="cgmissingdatar">CGMissingDataR<a class="anchor" aria-label="anchor" href="#cgmissingdatar"></a>
 </h2>
-<p>CGMissingDataR supports two related continuous glucose monitoring
-missing-data workflows:</p>
-<ul>
-<li>benchmarking imputation methods by masking known glucose values,
-and</li>
-<li>imputing glucose values that are already missing in user data.</li>
-</ul>
-<p>The current workflow functions accept a raw timestamp column and
-create <code>TimeSeries</code> and <code>TimeDifferenceMinutes</code>
-internally. You can choose which model outputs to return with
-<code>models</code>. The default is <code>models = "mice_only"</code>
-for a quick MICE-only run. Use <code>models = "all"</code> to run
-MICE-only, Random Forest, kNN, XGBoost, LightGBM, and ARIMA, or pass a
-subset such as <code>models = c("mice_only", "rf")</code>.</p>
+<p>CGMissingDataR imputes missing glucose values in continuous glucose
+monitoring (CGM) data. The main public workflow is
+<code><a href="../reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation()</a></code>, which accepts a raw
+timestamp column, creates <code>TimeSeries</code> and
+<code>TimeDifferenceMinutes</code> internally, and returns completed
+values from the selected imputation models.</p>
+<p>The timestamp column can be stored in common formats such as
+<code>2020:01:16:00:00</code>, <code>2020-01-16 00:00:00</code>,
+<code>2020/01/16 00:00:00</code>, or as a <code>POSIXct</code> column.
+The function standardizes those timestamps before calling
+<code><a href="https://rdrr.io/pkg/CGManalyzer/man/timeSeqConversion.fn.html" class="external-link">CGManalyzer::timeSeqConversion.fn()</a></code>.</p>
+<p>Use <code>models = "mice_only"</code> for a quick MICE-only run. Use
+<code>models = "all"</code> to run MICE-only, Random Forest, kNN,
+XGBoost, LightGBM, and ARIMA, or pass a subset such as
+<code>models = c("mice_only", "rf")</code>.</p>
+<p>Simulation-based benchmarking is kept as an internal development and
+validation workflow.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
@@ -111,13 +114,11 @@ available:</p>
 <div class="section level3">
 <h3 id="example-data">Example Data<a class="anchor" aria-label="anchor" href="#example-data"></a>
 </h3>
-<p>The package includes two small multi-subject CGM example datasets.
-Both contain raw timestamps, not precomputed <code>TimeSeries</code> or
-<code>TimeDifferenceMinutes</code> columns. Those generated time
-features are created inside the imputation functions.</p>
-<p><code>CGMExampleData</code> is intended for benchmarking. The glucose
-values are complete, so the benchmark function can mask known values and
-compare imputed values against the truth.</p>
+<p><code>CGMExampleData</code> is a small multi-subject CGM dataset with
+raw timestamps and deterministic missing glucose values. It does not
+include <code>TimeSeries</code> or <code>TimeDifferenceMinutes</code>;
+those generated time features are created inside the imputation
+function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CGMExampleData"</span><span class="op">)</span></span>
 <span></span>
@@ -129,7 +130,7 @@ compare imputed values against the truth.</p>
 <span>  MissingPercent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">CGMExampleData</span><span class="op">$</span><span class="va">LBORRES</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;          Dataset Rows Subjects MissingGlucose MissingPercent</span></span>
-<span><span class="co">#&gt; 1 CGMExampleData  500        5              0              0</span></span>
+<span><span class="co">#&gt; 1 CGMExampleData  500        5             50             10</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CGMExampleData</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   USUBJID LBORRES             Time AGE hba1c</span></span>
@@ -139,123 +140,23 @@ compare imputed values against the truth.</p>
 <span><span class="co">#&gt; 4      11     132 2020:01:16:00:15  34   6.4</span></span>
 <span><span class="co">#&gt; 5      11     132 2020:01:16:00:20  34   6.4</span></span>
 <span><span class="co">#&gt; 6      11     132 2020:01:16:00:25  34   6.4</span></span></code></pre></div>
-<p><code>CGMExampleData2</code> has the same columns but includes
-deterministic missing glucose values. It is intended for demonstrating
-imputation of actual missing target values.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CGMExampleData2"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Dataset <span class="op">=</span> <span class="st">"CGMExampleData2"</span>,</span>
-<span>  Rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">CGMExampleData2</span><span class="op">)</span>,</span>
-<span>  Subjects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">CGMExampleData2</span><span class="op">$</span><span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  MissingGlucose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">CGMExampleData2</span><span class="op">$</span><span class="va">LBORRES</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  MissingPercent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">CGMExampleData2</span><span class="op">$</span><span class="va">LBORRES</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;           Dataset Rows Subjects MissingGlucose MissingPercent</span></span>
-<span><span class="co">#&gt; 1 CGMExampleData2  500        5             50             10</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">CGMExampleData2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   USUBJID LBORRES             Time AGE hba1c</span></span>
-<span><span class="co">#&gt; 1      11     150 2020:01:16:00:00  34   6.4</span></span>
-<span><span class="co">#&gt; 2      11     134 2020:01:16:00:05  34   6.4</span></span>
-<span><span class="co">#&gt; 3      11     125 2020:01:16:00:10  34   6.4</span></span>
-<span><span class="co">#&gt; 4      11     132 2020:01:16:00:15  34   6.4</span></span>
-<span><span class="co">#&gt; 5      11     132 2020:01:16:00:20  34   6.4</span></span>
-<span><span class="co">#&gt; 6      11     132 2020:01:16:00:25  34   6.4</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="benchmark-known-glucose-values">Benchmark Known Glucose Values<a class="anchor" aria-label="anchor" href="#benchmark-known-glucose-values"></a>
-</h3>
-<p>Use <code><a href="../reference/run_comprehensive_imputation_benchmark.html">run_comprehensive_imputation_benchmark()</a></code> when
-glucose values are known and you want to mask a portion of them to
-compare model performance.</p>
-<p>This example masks 5% of the glucose rows using random masking and
-runs all available methods. Smaller model iteration counts are used so
-the example stays reasonably quick.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">benchmark_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_comprehensive_imputation_benchmark.html">run_comprehensive_imputation_benchmark</a></span><span class="op">(</span></span>
-<span>  <span class="va">CGMExampleData</span>,</span>
-<span>  target_col <span class="op">=</span> <span class="st">"LBORRES"</span>,</span>
-<span>  feature_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AGE"</span>, <span class="st">"hba1c"</span><span class="op">)</span>,</span>
-<span>  id_col <span class="op">=</span> <span class="st">"USUBJID"</span>,</span>
-<span>  time_col <span class="op">=</span> <span class="st">"Time"</span>,</span>
-<span>  time_format <span class="op">=</span> <span class="st">"yyyy:mm:dd:hh:nn"</span>,</span>
-<span>  mask_rates <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  mask_type <span class="op">=</span> <span class="st">"random"</span>,</span>
-<span>  models <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span>  rf_n_estimators <span class="op">=</span> <span class="fl">25</span>,</span>
-<span>  xgb_nrounds <span class="op">=</span> <span class="fl">25</span>,</span>
-<span>  lgb_nrounds <span class="op">=</span> <span class="fl">25</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>The <code>results</code> table contains one row per selected model
-and mask rate.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">benchmark_out</span><span class="op">$</span><span class="va">results</span></span>
-<span><span class="co">#&gt;   MaskRate MaskType                                    Method      MAPE</span></span>
-<span><span class="co">#&gt; 1       5%   random     ARIMA(4,1,0) on MICE-completed target 1.9770378</span></span>
-<span><span class="co">#&gt; 2       5%   random      MICE + KNN (engineered lag features) 0.5088444</span></span>
-<span><span class="co">#&gt; 3       5%   random MICE + LightGBM (engineered lag features) 0.8230684</span></span>
-<span><span class="co">#&gt; 4       5%   random       MICE + RF (engineered lag features) 0.3515021</span></span>
-<span><span class="co">#&gt; 5       5%   random  MICE + XGBoost (engineered lag features) 0.8499923</span></span>
-<span><span class="co">#&gt; 6       5%   random MICE-only (base features; impute LBORRES) 2.0344169</span></span>
-<span><span class="co">#&gt;          R2         MRD MaskedCount</span></span>
-<span><span class="co">#&gt; 1 0.9496530 0.019770378          25</span></span>
-<span><span class="co">#&gt; 2 0.9965445 0.005088444          25</span></span>
-<span><span class="co">#&gt; 3 0.9946395 0.008230684          25</span></span>
-<span><span class="co">#&gt; 4 0.9976854 0.003515021          25</span></span>
-<span><span class="co">#&gt; 5 0.9945244 0.008499923          25</span></span>
-<span><span class="co">#&gt; 6 0.9606598 0.020344169          25</span></span></code></pre></div>
-<p>Each selected model also gets its own completed data frame in
-<code>benchmark_out$imputed_data</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">benchmark_out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "mice_only" "rf"        "knn"       "xgboost"   "lightgbm"  "arima"</span></span></code></pre></div>
-<p>The model-specific data frames include the original observed glucose
-value, whether the row was masked, and the model-specific completed
-value.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span></span>
-<span>  <span class="va">benchmark_out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span><span class="op">[</span></span>
-<span>    ,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>      <span class="st">"USUBJID"</span>, <span class="st">"Time"</span>, <span class="st">".Masked"</span>, <span class="st">"ObservedValue"</span>, <span class="st">"ImputedValue"</span>,</span>
-<span>      <span class="st">"TimeSeries"</span>, <span class="st">"TimeDifferenceMinutes"</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;   USUBJID             Time .Masked ObservedValue ImputedValue TimeSeries</span></span>
-<span><span class="co">#&gt; 1      11 2020:01:16:00:00   FALSE           150          150      31075</span></span>
-<span><span class="co">#&gt; 2      11 2020:01:16:00:05   FALSE           134          134      31080</span></span>
-<span><span class="co">#&gt; 3      11 2020:01:16:00:10   FALSE           125          125      31085</span></span>
-<span><span class="co">#&gt; 4      11 2020:01:16:00:15   FALSE           132          132      31090</span></span>
-<span><span class="co">#&gt; 5      11 2020:01:16:00:20   FALSE           132          132      31095</span></span>
-<span><span class="co">#&gt; 6      11 2020:01:16:00:25   FALSE           132          132      31100</span></span>
-<span><span class="co">#&gt;   TimeDifferenceMinutes</span></span>
-<span><span class="co">#&gt; 1                     0</span></span>
-<span><span class="co">#&gt; 2                     5</span></span>
-<span><span class="co">#&gt; 3                     5</span></span>
-<span><span class="co">#&gt; 4                     5</span></span>
-<span><span class="co">#&gt; 5                     5</span></span>
-<span><span class="co">#&gt; 6                     5</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="impute-real-missing-glucose-values">Impute Real Missing Glucose Values<a class="anchor" aria-label="anchor" href="#impute-real-missing-glucose-values"></a>
+<h3 id="impute-missing-glucose-values">Impute Missing Glucose Values<a class="anchor" aria-label="anchor" href="#impute-missing-glucose-values"></a>
 </h3>
 <p>Use <code><a href="../reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation()</a></code> when your data
 already contains missing glucose values. This function returns imputed
 values but does not calculate accuracy metrics, because the true values
 for those missing rows are unknown.</p>
-<p>This example uses <code>CGMExampleData2</code>, where 50 of the 500
-glucose rows are missing.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>This example uses all available methods. Smaller model iteration
+counts are used so the example stays reasonably quick.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">impute_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_missing_glucose_imputation.html">run_missing_glucose_imputation</a></span><span class="op">(</span></span>
-<span>  <span class="va">CGMExampleData2</span>,</span>
+<span>  <span class="va">CGMExampleData</span>,</span>
 <span>  target_col <span class="op">=</span> <span class="st">"LBORRES"</span>,</span>
 <span>  feature_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AGE"</span>, <span class="st">"hba1c"</span><span class="op">)</span>,</span>
 <span>  id_col <span class="op">=</span> <span class="st">"USUBJID"</span>,</span>
 <span>  time_col <span class="op">=</span> <span class="st">"Time"</span>,</span>
-<span>  time_format <span class="op">=</span> <span class="st">"yyyy:mm:dd:hh:nn"</span>,</span>
 <span>  models <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  rf_n_estimators <span class="op">=</span> <span class="fl">25</span>,</span>
 <span>  xgb_nrounds <span class="op">=</span> <span class="fl">25</span>,</span>
@@ -263,7 +164,7 @@ glucose rows are missing.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The <code>summary</code> table reports the missingness seen after
 preprocessing.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">impute_out</span><span class="op">$</span><span class="va">summary</span></span>
 <span><span class="co">#&gt;                                      Method MissingRate MissingCount RowsUsed</span></span>
 <span><span class="co">#&gt; 1 MICE-only (base features; impute LBORRES)         0.1           50      500</span></span>
@@ -274,14 +175,14 @@ preprocessing.</p>
 <span><span class="co">#&gt; 6     ARIMA(4,1,0) on MICE-completed target         0.1           50      500</span></span></code></pre></div>
 <p>The returned <code>imputed_data</code> object is a named list with
 one completed data frame per selected method.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">impute_out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mice_only" "rf"        "knn"       "xgboost"   "lightgbm"  "arima"</span></span></code></pre></div>
-<p>In real-imputation output, the original target column is left
-unchanged. That means <code>LBORRES</code> is still <code>NA</code>
-where glucose was originally missing, while <code>ImputedValue</code>
-contains the completed glucose value.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>In the returned data, the original target column is left unchanged.
+That means <code>LBORRES</code> is still <code>NA</code> where glucose
+was originally missing, while <code>ImputedValue</code> contains the
+completed glucose value.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf_missing_rows</span> <span class="op">&lt;-</span> <span class="va">impute_out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span><span class="op">[</span></span>
 <span>  <span class="va">impute_out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span><span class="op">$</span><span class="va">.Missing</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
