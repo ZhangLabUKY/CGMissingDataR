@@ -3,7 +3,6 @@
 #'
 #' @description
 #' This function is deprecated. Use
-#' `run_comprehensive_imputation_benchmark()` for benchmark comparisons or
 #' `run_missing_glucose_imputation()` for real missing glucose values.
 #'
 #' This function implements missingness benchmarking by masking the target column at various rates and
@@ -58,10 +57,7 @@ run_missingness_benchmark <- function(
   lifecycle::deprecate_warn(
     "0.0.1.9000",
     "run_missingness_benchmark()",
-    details = c(
-      "Use run_comprehensive_imputation_benchmark() for benchmark comparisons.",
-      "Use run_missing_glucose_imputation() for real missing glucose values."
-    )
+    details = "Use run_missing_glucose_imputation() for real missing glucose values."
   )
 
   # ---------------------------------------------------------------------------

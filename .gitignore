@@ -12,4 +12,5 @@ vignettes/How-To-Use-CGMissingDataR_cache
 cran-comments.md
 CRAN-SUBMISSiON
 /data-raw/Test-Data.csv
+/data-raw/Test-Data-2.csv
 comprehensive_imputation_script_v2.R

@@ -8,7 +8,8 @@
 A data frame with 500 rows and 5 variables:
 \describe{
 \item{USUBJID}{Numeric subject identifier.}
-\item{LBORRES}{Laboratory Observed Result for Glucose (numeric).}
+\item{LBORRES}{Laboratory Observed Result for Glucose (numeric), with
+deterministic missing values.}
 \item{Time}{Raw timestamp in \code{yyyy:mm:dd:hh:nn} format.}
 \item{AGE}{Synthetic age in years.}
 \item{hba1c}{Synthetic HbA1c value.}
@@ -18,7 +19,8 @@ A data frame with 500 rows and 5 variables:
 CGMExampleData
 }
 \description{
-A small multi-subject CGM dataset intended for benchmark examples and tests.
+A small multi-subject CGM dataset intended for real missing-value imputation
+examples. It contains 50 deterministic missing glucose values.
 }
 \examples{
 data("CGMExampleData")

@@ -26,18 +26,16 @@ checks](https://badges.cranchecks.info/summary/CGMissingDataR.svg)](https://cran
 Release](https://img.shields.io/github/last-commit/ZhangLabUKY/CGMissingDataR/master)](https://github.com/ZhangLabUKY/CGMissingDataR/commits/master/)
 <!-- badges: end -->
 
-CGMissingDataR supports continuous glucose monitoring-style missing-data
-workflows. It can benchmark imputation methods by masking known glucose values,
-or impute glucose values that are already missing in user data.
+CGMissingDataR supports continuous glucose monitoring (CGM) workflows for
+imputing glucose values that are already missing in user data.
 
-Current workflows include:
+Current workflow features include:
 
-* `run_comprehensive_imputation_benchmark()` for artificial masking benchmarks,
 * `run_missing_glucose_imputation()` for real missing glucose values,
 * model selection with `models = "mice_only"`, a subset of models, or
   `models = "all"`, and
 * automatic creation of `TimeSeries` and `TimeDifferenceMinutes` from a raw
-  timestamp column.
+  timestamp column, with common timestamp formats standardized internally.
 
 ## Installation
 
@@ -65,7 +63,7 @@ install.packages("CGMissingDataR")
 ## Learn More
 
 The vignette is the main tutorial and includes runnable examples, dataset
-summaries, benchmark results, and real-imputation output:
+summaries, and real-imputation output:
 
 <https://zhanglabuky.github.io/CGMissingDataR/articles/How-To-Use-CGMissingDataR.html>
 

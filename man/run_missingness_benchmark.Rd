@@ -54,7 +54,6 @@ A data.frame with columns: MaskRate, Method, MRD, MaskedCount.
 }
 \description{
 This function is deprecated. Use
-\code{run_comprehensive_imputation_benchmark()} for benchmark comparisons or
 \code{run_missing_glucose_imputation()} for real missing glucose values.
 
 This function implements missingness benchmarking by masking the target column at various rates and

@@ -1,23 +1,23 @@
 # CGMissingDataR (development version)
 
-* Added `run_comprehensive_imputation_benchmark()` for benchmarking target
-  glucose imputation with random, single-block, and gap-distribution block
-  masking.
-* Added `run_missing_glucose_imputation()` for imputing glucose values that are
-  already missing in user data.
-* Added automatic raw timestamp conversion with
+* Made `run_missing_glucose_imputation()` the primary public workflow for
+  imputing glucose values that are already missing in user data.
+* Made the simulation-based comprehensive masking benchmark internal for
+  development and validation.
+* Added automatic raw timestamp standardization for common character,
+  `POSIXct`, and `Date` inputs before using
   `CGManalyzer::timeSeqConversion.fn()` to create `TimeSeries`, plus
   within-subject `TimeDifferenceMinutes`.
 * Added model selection with the `models` argument. The default is
   `models = "mice_only"`; use `models = "all"` to run MICE-only, Random Forest,
   kNN, XGBoost, LightGBM, and ARIMA.
-* Updated benchmark and real-imputation outputs to return nested
-  model-specific `imputed_data` data frames.
-* Added `CGMExampleData2`, a 500-row multi-subject CGM example dataset with
-  deterministic missing glucose values for real-imputation examples.
+* Updated real-imputation outputs to return nested model-specific
+  `imputed_data` data frames.
+* Updated `CGMExampleData` to be the public 500-row multi-subject CGM example
+  dataset with deterministic missing glucose values for real-imputation
+  examples.
 * Deprecated `run_missingness_benchmark()`. It remains available for backward
   compatibility and now warns users to prefer
-  `run_comprehensive_imputation_benchmark()` for benchmark comparisons or
   `run_missing_glucose_imputation()` for real missing glucose values.
 * Preparing for version 0.0.2 of CGMissingDataR after transferring GitHub
   Repository and fixing URLs.

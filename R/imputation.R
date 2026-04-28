@@ -17,8 +17,9 @@
 #'   features.
 #' @param time_col Character string: raw timestamp column to convert into
 #'   `TimeSeries`.
-#' @param time_format Character string passed to
-#'   `CGManalyzer::timeSeqConversion.fn()`.
+#' @param time_format Advanced character string passed to
+#'   `CGManalyzer::timeSeqConversion.fn()`. The default automatically handles
+#'   common timestamp inputs, so most users only need to provide `time_col`.
 #' @param time_unit Character string passed to
 #'   `CGManalyzer::timeSeqConversion.fn()`. Use `"minute"` or `"second"`.
 #' @param mask_rates Numeric vector in (0, 1): target-row masking rates.
@@ -67,26 +68,8 @@
 #' @importFrom stats complete.cases median predict
 #' @importFrom CGManalyzer timeSeqConversion.fn
 #'
-#' @examples
-#' data("CGMExampleData")
-#' out <- run_comprehensive_imputation_benchmark(
-#'   CGMExampleData,
-#'   target_col = "LBORRES",
-#'   feature_cols = c("AGE", "hba1c"),
-#'   id_col = "USUBJID",
-#'   time_col = "Time",
-#'   time_format = "yyyy:mm:dd:hh:nn",
-#'   mask_rates = 0.05,
-#'   models = "all",
-#'   rf_n_estimators = 25,
-#'   xgb_nrounds = 25,
-#'   lgb_nrounds = 25
-#' )
-#' out$results
-#' names(out$imputed_data)
-#' head(out$imputed_data$rf)
-#'
-#' @export
+#' @keywords internal
+#' @noRd
 run_comprehensive_imputation_benchmark <- function(
   data,
   target_col,
@@ -572,11 +555,10 @@ run_comprehensive_imputation_benchmark <- function(
 #' Impute real missing glucose values
 #'
 #' @description
-#' Imputes existing missing values in a target glucose column using the same
-#' time-feature, lag-feature, and model workflow as
-#' `run_comprehensive_imputation_benchmark()`. This function does not calculate
-#' accuracy metrics because the true values for the originally missing glucose
-#' rows are unknown.
+#' Imputes existing missing values in a target glucose column using generated
+#' time features, lag features, and the selected model workflow. This function
+#' does not calculate accuracy metrics because the true values for the
+#' originally missing glucose rows are unknown.
 #'
 #' @param data A data.frame, an object coercible to data.frame, or a path to a
 #'   CSV file.
@@ -589,8 +571,9 @@ run_comprehensive_imputation_benchmark <- function(
 #'   and lag features.
 #' @param time_col Character string: raw timestamp column to convert into
 #'   `TimeSeries`.
-#' @param time_format Character string passed to
-#'   `CGManalyzer::timeSeqConversion.fn()`.
+#' @param time_format Advanced character string passed to
+#'   `CGManalyzer::timeSeqConversion.fn()`. The default automatically handles
+#'   common timestamp inputs, so most users only need to provide `time_col`.
 #' @param time_unit Character string passed to
 #'   `CGManalyzer::timeSeqConversion.fn()`. Use `"minute"` or `"second"`.
 #' @param models Character vector of models to return. Use `"mice_only"`,
@@ -617,6 +600,11 @@ run_comprehensive_imputation_benchmark <- function(
 #'   list of model-specific completed data.frames.
 #'
 #' @details
+#' Common timestamp inputs, including `POSIXct`, `Date`,
+#' `2020:01:16:00:00`, `2020-01-16 00:00:00`, `2020/01/16 00:00:00`, and
+#' `2020-01-16T00:00:00`, are standardized internally before
+#' `CGManalyzer::timeSeqConversion.fn()` is called.
+#'
 #' The returned `imputed_data` object is a named list with one data.frame per
 #' selected model. The original target column is kept unchanged. `ObservedValue`
 #' contains the original target values, including `NA` where glucose was
@@ -624,14 +612,13 @@ run_comprehensive_imputation_benchmark <- function(
 #' values.
 #'
 #' @examples
-#' data("CGMExampleData2")
+#' data("CGMExampleData")
 #' out <- run_missing_glucose_imputation(
-#'   CGMExampleData2,
+#'   CGMExampleData,
 #'   target_col = "LBORRES",
 #'   feature_cols = c("AGE", "hba1c"),
 #'   id_col = "USUBJID",
 #'   time_col = "Time",
-#'   time_format = "yyyy:mm:dd:hh:nn",
 #'   models = c("mice_only", "rf"),
 #'   rf_n_estimators = 25
 #' )
@@ -1152,8 +1139,12 @@ run_missing_glucose_imputation <- function(
   time_series_col,
   time_diff_col
 ) {
+  prepared_time <- .cgmd_prepare_time_stamps(
+    x = df[[raw_time_col]],
+    time_format = time_format
+  )
   time_mat <- CGManalyzer::timeSeqConversion.fn(
-    time.stamp = as.character(df[[raw_time_col]]),
+    time.stamp = prepared_time,
     time.format = time_format,
     timeUnit = time_unit
   )
@@ -1178,6 +1169,93 @@ run_missing_glucose_imputation <- function(
   ]
 
   as.data.frame(dt)
+}
+
+.cgmd_prepare_time_stamps <- function(x, time_format) {
+  default_time_format <- "yyyy:mm:dd:hh:nn"
+  if (!identical(time_format, default_time_format)) {
+    return(as.character(x))
+  }
+
+  if (inherits(x, "POSIXt")) {
+    return(format(x, "%Y:%m:%d:%H:%M"))
+  }
+
+  if (inherits(x, "Date")) {
+    return(format(as.POSIXct(x, tz = "UTC"), "%Y:%m:%d:%H:%M"))
+  }
+
+  x_chr <- trimws(as.character(x))
+  missing_time <- is.na(x_chr) | x_chr == ""
+  if (any(missing_time)) {
+    stop("time_col contains missing or blank timestamps.")
+  }
+
+  if (all(grepl("^\\d{4}:\\d{2}:\\d{2}:\\d{2}:\\d{2}$", x_chr))) {
+    return(x_chr)
+  }
+
+  parsed <- .cgmd_parse_common_time_stamps(x_chr)
+  failed <- is.na(parsed)
+  if (any(failed)) {
+    examples <- paste(
+      "2020:01:16:00:00",
+      "2020-01-16 00:00",
+      "2020-01-16 00:00:00",
+      "2020/01/16 00:00",
+      "2020/01/16 00:00:00",
+      "2020-01-16T00:00:00",
+      "01/16/2020 00:00",
+      sep = ", "
+    )
+    stop(
+      "Unable to parse time_col timestamps automatically. ",
+      "Use a common timestamp format such as: ",
+      examples,
+      ". For advanced CGManalyzer-specific formats, provide time_format."
+    )
+  }
+
+  format(parsed, "%Y:%m:%d:%H:%M")
+}
+
+.cgmd_parse_common_time_stamps <- function(x) {
+  formats <- c(
+    "%Y:%m:%d:%H:%M:%S",
+    "%Y:%m:%d:%H:%M",
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d %H:%M",
+    "%Y/%m/%d %H:%M:%S",
+    "%Y/%m/%d %H:%M",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%dT%H:%M",
+    "%Y-%m-%d",
+    "%Y/%m/%d",
+    "%m/%d/%Y %H:%M:%S",
+    "%m/%d/%Y %H:%M",
+    "%m/%d/%Y"
+  )
+
+  parsed <- as.POSIXct(rep(NA_character_, length(x)), tz = "UTC")
+  remaining <- rep(TRUE, length(x))
+
+  for (fmt in formats) {
+    if (!any(remaining)) {
+      break
+    }
+    candidate <- as.POSIXct(
+      strptime(x[remaining], format = fmt, tz = "UTC"),
+      tz = "UTC"
+    )
+    ok <- !is.na(candidate)
+    if (any(ok)) {
+      remaining_idx <- which(remaining)
+      parsed[remaining_idx[ok]] <- candidate[ok]
+      remaining[remaining_idx[ok]] <- FALSE
+    }
+  }
+
+  parsed
 }
 
 .cgmd_sort_by_id_time <- function(df, id_col, time_col) {

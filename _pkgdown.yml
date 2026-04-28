@@ -26,7 +26,6 @@ articles:
 reference:
 - title: Current Imputation Workflows
   contents:
-  - run_comprehensive_imputation_benchmark
   - run_missing_glucose_imputation
 - title: Deprecated Legacy Workflow
   contents:
@@ -34,7 +33,6 @@ reference:
 - title: Datasets
   contents:
   - CGMExampleData
-  - CGMExampleData2
 footer:
   left: © 2026 Shubh Saraswat
   right: Built with pkgdown

@@ -16,18 +16,23 @@ knitr::opts_chunk$set(
 
 # CGMissingDataR
 
-CGMissingDataR supports two related continuous glucose monitoring missing-data
-workflows:
+CGMissingDataR imputes missing glucose values in continuous glucose monitoring
+(CGM) data. The main public workflow is `run_missing_glucose_imputation()`,
+which accepts a raw timestamp column, creates `TimeSeries` and
+`TimeDifferenceMinutes` internally, and returns completed values from the
+selected imputation models.
 
-* benchmarking imputation methods by masking known glucose values, and
-* imputing glucose values that are already missing in user data.
+The timestamp column can be stored in common formats such as
+`2020:01:16:00:00`, `2020-01-16 00:00:00`, `2020/01/16 00:00:00`, or as a
+`POSIXct` column. The function standardizes those timestamps before calling
+`CGManalyzer::timeSeqConversion.fn()`.
 
-The current workflow functions accept a raw timestamp column and create
-`TimeSeries` and `TimeDifferenceMinutes` internally. You can choose which model
-outputs to return with `models`. The default is `models = "mice_only"` for a
-quick MICE-only run. Use `models = "all"` to run MICE-only, Random Forest, kNN,
-XGBoost, LightGBM, and ARIMA, or pass a subset such as
-`models = c("mice_only", "rf")`.
+Use `models = "mice_only"` for a quick MICE-only run. Use `models = "all"` to
+run MICE-only, Random Forest, kNN, XGBoost, LightGBM, and ARIMA, or pass a
+subset such as `models = c("mice_only", "rf")`.
+
+Simulation-based benchmarking is kept as an internal development and validation
+workflow.
 
 ## Installation
 
@@ -54,15 +59,12 @@ library(CGMissingDataR)
 
 ## Example Data
 
-The package includes two small multi-subject CGM example datasets. Both contain
-raw timestamps, not precomputed `TimeSeries` or `TimeDifferenceMinutes` columns.
-Those generated time features are created inside the imputation functions.
+`CGMExampleData` is a small multi-subject CGM dataset with raw timestamps and
+deterministic missing glucose values. It does not include `TimeSeries` or
+`TimeDifferenceMinutes`; those generated time features are created inside the
+imputation function.
 
-`CGMExampleData` is intended for benchmarking. The glucose values are complete,
-so the benchmark function can mask known values and compare imputed values
-against the truth.
-
-```{r example-data-complete}
+```{r example-data}
 data("CGMExampleData")
 
 data.frame(
@@ -76,95 +78,22 @@ data.frame(
 head(CGMExampleData)
 ```
 
-`CGMExampleData2` has the same columns but includes deterministic missing
-glucose values. It is intended for demonstrating imputation of actual missing
-target values.
-
-```{r example-data-missing}
-data("CGMExampleData2")
-
-data.frame(
-  Dataset = "CGMExampleData2",
-  Rows = nrow(CGMExampleData2),
-  Subjects = length(unique(CGMExampleData2$USUBJID)),
-  MissingGlucose = sum(is.na(CGMExampleData2$LBORRES)),
-  MissingPercent = round(mean(is.na(CGMExampleData2$LBORRES)) * 100, 1)
-)
-
-head(CGMExampleData2)
-```
-
-## Benchmark Known Glucose Values
-
-Use `run_comprehensive_imputation_benchmark()` when glucose values are known
-and you want to mask a portion of them to compare model performance.
-
-This example masks 5% of the glucose rows using random masking and runs all
-available methods. Smaller model iteration counts are used so the example stays
-reasonably quick.
-
-```{r benchmark-example}
-benchmark_out <- run_comprehensive_imputation_benchmark(
-  CGMExampleData,
-  target_col = "LBORRES",
-  feature_cols = c("AGE", "hba1c"),
-  id_col = "USUBJID",
-  time_col = "Time",
-  time_format = "yyyy:mm:dd:hh:nn",
-  mask_rates = 0.05,
-  mask_type = "random",
-  models = "all",
-  rf_n_estimators = 25,
-  xgb_nrounds = 25,
-  lgb_nrounds = 25
-)
-```
-
-The `results` table contains one row per selected model and mask rate.
-
-```{r benchmark-results}
-benchmark_out$results
-```
-
-Each selected model also gets its own completed data frame in
-`benchmark_out$imputed_data`.
-
-```{r benchmark-imputed-names}
-names(benchmark_out$imputed_data)
-```
-
-The model-specific data frames include the original observed glucose value,
-whether the row was masked, and the model-specific completed value.
-
-```{r benchmark-rf-preview}
-head(
-  benchmark_out$imputed_data$rf[
-    ,
-    c(
-      "USUBJID", "Time", ".Masked", "ObservedValue", "ImputedValue",
-      "TimeSeries", "TimeDifferenceMinutes"
-    )
-  ]
-)
-```
-
-## Impute Real Missing Glucose Values
+## Impute Missing Glucose Values
 
 Use `run_missing_glucose_imputation()` when your data already contains missing
 glucose values. This function returns imputed values but does not calculate
 accuracy metrics, because the true values for those missing rows are unknown.
 
-This example uses `CGMExampleData2`, where 50 of the 500 glucose rows are
-missing.
+This example uses all available methods. Smaller model iteration counts are
+used so the example stays reasonably quick.
 
 ```{r real-imputation-example}
 impute_out <- run_missing_glucose_imputation(
-  CGMExampleData2,
+  CGMExampleData,
   target_col = "LBORRES",
   feature_cols = c("AGE", "hba1c"),
   id_col = "USUBJID",
   time_col = "Time",
-  time_format = "yyyy:mm:dd:hh:nn",
   models = "all",
   rf_n_estimators = 25,
   xgb_nrounds = 25,
@@ -185,8 +114,8 @@ per selected method.
 names(impute_out$imputed_data)
 ```
 
-In real-imputation output, the original target column is left unchanged. That
-means `LBORRES` is still `NA` where glucose was originally missing, while
+In the returned data, the original target column is left unchanged. That means
+`LBORRES` is still `NA` where glucose was originally missing, while
 `ImputedValue` contains the completed glucose value.
 
 ```{r real-imputation-rf-preview}

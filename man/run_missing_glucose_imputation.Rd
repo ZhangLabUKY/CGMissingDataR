@@ -41,8 +41,9 @@ and lag features.}
 \item{time_col}{Character string: raw timestamp column to convert into
 \code{TimeSeries}.}
 
-\item{time_format}{Character string passed to
-\code{CGManalyzer::timeSeqConversion.fn()}.}
+\item{time_format}{Advanced character string passed to
+\code{CGManalyzer::timeSeqConversion.fn()}. The default automatically handles
+common timestamp inputs, so most users only need to provide \code{time_col}.}
 
 \item{time_unit}{Character string passed to
 \code{CGManalyzer::timeSeqConversion.fn()}. Use \code{"minute"} or \code{"second"}.}
@@ -81,13 +82,17 @@ A list containing \code{summary}, a data.frame with columns \code{Method},
 list of model-specific completed data.frames.
 }
 \description{
-Imputes existing missing values in a target glucose column using the same
-time-feature, lag-feature, and model workflow as
-\code{run_comprehensive_imputation_benchmark()}. This function does not calculate
-accuracy metrics because the true values for the originally missing glucose
-rows are unknown.
+Imputes existing missing values in a target glucose column using generated
+time features, lag features, and the selected model workflow. This function
+does not calculate accuracy metrics because the true values for the
+originally missing glucose rows are unknown.
 }
 \details{
+Common timestamp inputs, including \code{POSIXct}, \code{Date},
+\code{2020:01:16:00:00}, \verb{2020-01-16 00:00:00}, \verb{2020/01/16 00:00:00}, and
+\verb{2020-01-16T00:00:00}, are standardized internally before
+\code{CGManalyzer::timeSeqConversion.fn()} is called.
+
 The returned \code{imputed_data} object is a named list with one data.frame per
 selected model. The original target column is kept unchanged. \code{ObservedValue}
 contains the original target values, including \code{NA} where glucose was
@@ -95,14 +100,13 @@ missing, and \code{ImputedValue} contains the completed model-specific target
 values.
 }
 \examples{
-data("CGMExampleData2")
+data("CGMExampleData")
 out <- run_missing_glucose_imputation(
-  CGMExampleData2,
+  CGMExampleData,
   target_col = "LBORRES",
   feature_cols = c("AGE", "hba1c"),
   id_col = "USUBJID",
   time_col = "Time",
-  time_format = "yyyy:mm:dd:hh:nn",
   models = c("mice_only", "rf"),
   rf_n_estimators = 25
 )
