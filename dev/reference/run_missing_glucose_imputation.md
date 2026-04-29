@@ -156,27 +156,26 @@ out$summary
 #> 2       MICE + RF (engineered lag features)         0.1           50      500
 names(out$imputed_data)
 #> [1] "mice_only" "rf"       
-head(out$imputed_data$rf |>
-dplyr::filter(.Missing == TRUE))
-#>                                Method .Missing USUBJID LBORRES             Time
-#> 1 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:00:45
-#> 2 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:30
-#> 3 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:35
-#> 4 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:40
-#> 5 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:45
-#> 6 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:04:30
-#>   AGE hba1c TimeSeries TimeDifferenceMinutes LBORRES_lag1 LBORRES_lag2
-#> 1  34   6.4      31120                     5    135.00000    134.00000
-#> 2  34   6.4      31225                     5     83.00000     83.00000
-#> 3  34   6.4      31230                     5     74.48172     83.00000
-#> 4  34   6.4      31235                     5    140.24141     74.48172
-#> 5  34   6.4      31240                     5    220.58479    140.24141
-#> 6  34   6.4      31345                     5     80.00000     84.00000
-#>   LBORRES_lag3 LBORRES_rollmean_3 ObservedValue ImputedValue
-#> 1    131.00000          133.33333            NA       135.08
-#> 2     91.00000           85.66667            NA        82.52
-#> 3     83.00000           80.16057            NA        75.36
-#> 4     83.00000           99.24104            NA       155.76
-#> 5     74.48172          145.10264            NA       123.36
-#> 6     81.00000           81.66667            NA        78.68
+head(subset(out$imputed_data$rf, .Missing == TRUE))
+#>                                 Method .Missing USUBJID LBORRES
+#> 10 MICE + RF (engineered lag features)     TRUE      11      NA
+#> 31 MICE + RF (engineered lag features)     TRUE      11      NA
+#> 32 MICE + RF (engineered lag features)     TRUE      11      NA
+#> 33 MICE + RF (engineered lag features)     TRUE      11      NA
+#> 34 MICE + RF (engineered lag features)     TRUE      11      NA
+#> 55 MICE + RF (engineered lag features)     TRUE      11      NA
+#>                Time AGE hba1c TimeSeries TimeDifferenceMinutes LBORRES_lag1
+#> 10 2020:01:16:00:45  34   6.4      31120                     5    135.00000
+#> 31 2020:01:16:02:30  34   6.4      31225                     5     83.00000
+#> 32 2020:01:16:02:35  34   6.4      31230                     5     74.48172
+#> 33 2020:01:16:02:40  34   6.4      31235                     5    140.24141
+#> 34 2020:01:16:02:45  34   6.4      31240                     5    220.58479
+#> 55 2020:01:16:04:30  34   6.4      31345                     5     80.00000
+#>    LBORRES_lag2 LBORRES_lag3 LBORRES_rollmean_3 ObservedValue ImputedValue
+#> 10    134.00000    131.00000          133.33333            NA       135.08
+#> 31     83.00000     91.00000           85.66667            NA        82.52
+#> 32     83.00000     83.00000           80.16057            NA        75.36
+#> 33     74.48172     83.00000           99.24104            NA       155.76
+#> 34    140.24141     74.48172          145.10264            NA       123.36
+#> 55     84.00000     81.00000           81.66667            NA        78.68
 ```
