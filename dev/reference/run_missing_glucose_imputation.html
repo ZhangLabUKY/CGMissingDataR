@@ -205,9 +205,29 @@ values.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       MICE + RF (engineered lag features)         0.1           50      500</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mice_only" "rf"       </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span> <span class="op">%&gt;%</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.Missing</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in out$imputed_data$rf %&gt;% dplyr::filter(.Missing == TRUE):</span> could not find function "%&gt;%"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                Method .Missing USUBJID LBORRES             Time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:00:45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:02:45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 MICE + RF (engineered lag features)     TRUE      11      NA 2020:01:16:04:30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   AGE hba1c TimeSeries TimeDifferenceMinutes LBORRES_lag1 LBORRES_lag2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  34   6.4      31120                     5    135.00000    134.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  34   6.4      31225                     5     83.00000     83.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  34   6.4      31230                     5     74.48172     83.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  34   6.4      31235                     5    140.24141     74.48172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  34   6.4      31240                     5    220.58479    140.24141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  34   6.4      31345                     5     80.00000     84.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   LBORRES_lag3 LBORRES_rollmean_3 ObservedValue ImputedValue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    131.00000          133.33333            NA       135.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     91.00000           85.66667            NA        82.52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     83.00000           80.16057            NA        75.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     83.00000           99.24104            NA       155.76</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     74.48172          145.10264            NA       123.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     81.00000           81.66667            NA        78.68</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
