@@ -624,7 +624,7 @@ run_comprehensive_imputation_benchmark <- function(
 #' )
 #' out$summary
 #' names(out$imputed_data)
-#' head(out$imputed_data$rf)
+#' head(subset(out$imputed_data$rf, .Missing == TRUE))
 #'
 #' @export
 run_missing_glucose_imputation <- function(

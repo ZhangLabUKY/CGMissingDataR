@@ -112,6 +112,6 @@ out <- run_missing_glucose_imputation(
 )
 out$summary
 names(out$imputed_data)
-head(out$imputed_data$rf)
+head(subset(out$imputed_data$rf, .Missing == TRUE))
 
 }
