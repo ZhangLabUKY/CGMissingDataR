@@ -156,26 +156,7 @@ out$summary
 #> 2       MICE + RF (engineered lag features)         0.1           50      500
 names(out$imputed_data)
 #> [1] "mice_only" "rf"       
-head(out$imputed_data$rf)
-#>                                Method .Missing USUBJID LBORRES             Time
-#> 1 MICE + RF (engineered lag features)    FALSE      11     150 2020:01:16:00:00
-#> 2 MICE + RF (engineered lag features)    FALSE      11     134 2020:01:16:00:05
-#> 3 MICE + RF (engineered lag features)    FALSE      11     125 2020:01:16:00:10
-#> 4 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:15
-#> 5 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:20
-#> 6 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:25
-#>   AGE hba1c TimeSeries TimeDifferenceMinutes LBORRES_lag1 LBORRES_lag2
-#> 1  34   6.4      31075                     0           NA           NA
-#> 2  34   6.4      31080                     5          150           NA
-#> 3  34   6.4      31085                     5          134          150
-#> 4  34   6.4      31090                     5          125          134
-#> 5  34   6.4      31095                     5          132          125
-#> 6  34   6.4      31100                     5          132          132
-#>   LBORRES_lag3 LBORRES_rollmean_3 ObservedValue ImputedValue
-#> 1           NA                 NA           150          150
-#> 2           NA                 NA           134          134
-#> 3           NA                 NA           125          125
-#> 4          150           136.3333           132          132
-#> 5          134           130.3333           132          132
-#> 6          125           129.6667           132          132
+head(out$imputed_data$rf %>%
+dplyr::filter(.Missing == TRUE))
+#> Error in out$imputed_data$rf %>% dplyr::filter(.Missing == TRUE): could not find function "%>%"
 ```

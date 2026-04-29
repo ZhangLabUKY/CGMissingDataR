@@ -205,28 +205,9 @@ values.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       MICE + RF (engineered lag features)         0.1           50      500</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mice_only" "rf"       </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                Method .Missing USUBJID LBORRES             Time</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 MICE + RF (engineered lag features)    FALSE      11     150 2020:01:16:00:00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 MICE + RF (engineered lag features)    FALSE      11     134 2020:01:16:00:05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 MICE + RF (engineered lag features)    FALSE      11     125 2020:01:16:00:10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 MICE + RF (engineered lag features)    FALSE      11     132 2020:01:16:00:25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   AGE hba1c TimeSeries TimeDifferenceMinutes LBORRES_lag1 LBORRES_lag2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  34   6.4      31075                     0           NA           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  34   6.4      31080                     5          150           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  34   6.4      31085                     5          134          150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  34   6.4      31090                     5          125          134</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  34   6.4      31095                     5          132          125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  34   6.4      31100                     5          132          132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   LBORRES_lag3 LBORRES_rollmean_3 ObservedValue ImputedValue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           NA                 NA           150          150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           NA                 NA           134          134</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           NA                 NA           125          125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          150           136.3333           132          132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          134           130.3333           132          132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          125           129.6667           132          132</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">imputed_data</span><span class="op">$</span><span class="va">rf</span> <span class="op">%&gt;%</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.Missing</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in out$imputed_data$rf %&gt;% dplyr::filter(.Missing == TRUE):</span> could not find function "%&gt;%"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
